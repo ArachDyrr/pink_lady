@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 sql-python/config.py
 sql-python/nosql-connect/config.py
+sql-python/nosql-connect/app.py
+noSQLsave/config.py
