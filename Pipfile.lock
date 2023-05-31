@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1859510323b0d47c68b0c581f360d5e8772733a46a4c1a4c2adfc40df544b7ea"
+            "sha256": "0fe8c58c0ce6cbd66c01667a90c2d522fa3539a94be0b5e5acd049aa29697365"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -22,6 +22,22 @@
                 "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
             ],
             "version": "==1.4.4"
+        },
+        "azure-core": {
+            "hashes": [
+                "sha256:075fe06b74c3007950dd93d49440c2f3430fd9b4a5a2756ec8c79454afc989c6",
+                "sha256:d9664b4bc2675d72fba461a285ac43ae33abb2967014a955bf136d9703a2ab3c"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==1.26.4"
+        },
+        "azure-cosmos": {
+            "hashes": [
+                "sha256:68570310512deadeeacb29f9a2ed3c32c58083a456bc2f68e36b28e6353a3a97",
+                "sha256:e3852b38373ab6853a6b2a800a4a0df0ac7f157a7de3f05d1b18617ba5db76a2"
+            ],
+            "index": "pypi",
+            "version": "==4.3.1"
         },
         "certifi": {
             "hashes": [
@@ -603,7 +619,7 @@
                 "sha256:ce744938406de1e64b91410f473736e815f28c3b71201302612a68bf01517fea",
                 "sha256:efabbbbac1ab519a514579ba9ec52f006c28ae19d97915951f69fa70da2c9e91"
             ],
-            "markers": "sys_platform != 'linux'",
+            "markers": "python_version >= '3.10' and sys_platform == 'linux'",
             "version": "==4.23.2"
         },
         "psutil": {

@@ -12,6 +12,7 @@ torchaudio = "*"
 matplotlib = "*"
 numpy = "*"
 pandas = "*"
+azure-cosmos = "*"
 
 [dev-packages]
 
