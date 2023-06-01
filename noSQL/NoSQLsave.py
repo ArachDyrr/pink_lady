@@ -23,7 +23,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M")
 unique_id = f'{timestamp}_dyrr'
 
 # get the .pth file and encode it to base64
-pth_file_path = '/Users/stephandekker/workspace/pink_lady/noSQLsave/pth/use_this_Sonar_NN_35rl_53S_1_b15_e400_lr-3.pth'
+pth_file_path = '/Users/stephandekker/workspace/pink_lady/noSQL/pth/generated/use_this_Sonar_NN_35rl_53S_1_b15_e400_lr-3.pth'
 with open(pth_file_path, 'rb') as file:
     pth_data = file.read()
 pth_bytes = base64.b64encode(pth_data).decode('utf-8')
