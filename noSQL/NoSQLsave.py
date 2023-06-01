@@ -1,6 +1,6 @@
 from azure.cosmos import CosmosClient
 import base64
-from config import settings
+from config import settings, userAccountID
 from datetime import datetime
 
 from modelhyperparameters import runx   # import the model hyperparameters
@@ -20,7 +20,7 @@ container = database.get_container_client(container_name)
 
 # create a timestamp and a unique ID
 timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-unique_id = f'{timestamp}_dyrr'
+unique_id = f'{timestamp}_{userAccountID}'
 
 # get the .pth file and encode it to base64
 pth_file_path = '/Users/stephandekker/workspace/pink_lady/noSQL/pth/generated/use_this_Sonar_NN_35rl_53S_1_b15_e400_lr-3.pth'
