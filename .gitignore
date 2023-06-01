@@ -169,3 +169,5 @@ noSQL/pth/imported
 
 # MacOS files not needed to be added to git. 
 .DS_Store
+init/config.py
+.DS_Store
