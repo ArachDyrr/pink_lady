@@ -167,4 +167,5 @@ noSQL/config_2nd.py
 noSQL/pth/generated
 noSQL/pth/imported
 
-
+# MacOS files not needed to be added to git. 
+.DS_Store
