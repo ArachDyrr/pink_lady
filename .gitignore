@@ -162,9 +162,12 @@ cython_debug/
 # The config file with the Azure.Cosmos NoSQL db connection data.
 noSQL/config.py
 noSQL/config_2nd.py
+init/config.py
 
 # folders to locally store .pth files pulled from the NoSQL db
 noSQL/pth/generated
 noSQL/pth/imported
 
+# MacOS files not needed to be added to git. 
+.DS_Store
 
