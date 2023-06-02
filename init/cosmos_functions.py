@@ -6,8 +6,8 @@ from datetime import datetime
 
 
 
-# function to load the hyperparameters from Cosmos DB
-def load_parameters(unique_id ,parameter, settings=settings):
+# function to load the hyperparameters from Cosmos NoSQL DB
+def cosmos_load_parameters(unique_id ,parameter, settings=settings):
     
     # Retrieve settings from the config file
     endpoint_uri = settings['host']
@@ -31,9 +31,8 @@ def load_parameters(unique_id ,parameter, settings=settings):
    
     return parameter
 
-
-# function to load the .pth file from Cosmos DB
-def load_pth(unique_id, local_save_path=None, settings=settings): 
+# function to load the .pth file from Cosmos NoSQL DB
+def cosmos_load_pth(unique_id, local_save_path=None, settings=settings): 
         
         # Retrieve settings from the config file
         endpoint_uri = settings['host']
@@ -65,16 +64,15 @@ def load_pth(unique_id, local_save_path=None, settings=settings):
         output = decoded_pth_data
         return output
 
-
-# function to save the .pth file to Cosmos DB
-def save_pth(pth_data=None, parameters=None, run_result=None, settings=settings):   
-    from modelhyperparameters import runx   # import the model hyperparameters
-
+# function to save the .pth file to Cosmos NoSQL DB
+def cosmos_save_data(pth_data=None, parameters=None, run_result=None, settings=settings):   
+    
     # Retrieve settings from the config file
     endpoint_uri = settings['host']
     auth_key = settings['master_key']
     database_name = settings['database_id']
     container_name = settings['container_id']
+    userAccountID = settings['userAccountID']
 
     # Create the Cosmos DB client
     client = CosmosClient(endpoint_uri, auth_key)
@@ -104,19 +102,14 @@ def save_pth(pth_data=None, parameters=None, run_result=None, settings=settings)
 
 # test function of all functions in this file. 
 def run_tests():
-    local_save_path = '/Users/stephandekker/workspace/pink_lady/noSQL/pth/imported'
-    unique_id = "20230531_2310_dyrr"
-    pth = load_pth(unique_id, local_save_path)
-    print(pth)
-    print()
-    
-    unique_id = "20230602_1522_pinky"
+    # test the load_parameters function
+    unique_id = "20230602_1600_pinky"
     id = 'id'
     parameter = 'parameters'
     run_result = 'run_result'  
-    id = load_parameters(unique_id, id) 
-    run_result = load_parameters(unique_id, run_result)
-    parameter = load_parameters(unique_id, parameter)
+    id = cosmos_load_parameters(unique_id, id) 
+    run_result = cosmos_load_parameters(unique_id, run_result)
+    parameter = cosmos_load_parameters(unique_id, parameter)
     print(f'''
     id = {id}
     run_result = {run_result}
@@ -124,11 +117,20 @@ def run_tests():
 
     ''')
     
+    # test the load_pth function
+    local_save_path = '/Users/stephandekker/workspace/pink_lady/noSQL/pth/imported'
+    unique_id = "20230602_1600_pinky"
+    pth = cosmos_load_pth(unique_id, local_save_path)
+    print(pth)
+    print()
+    
 
+    
+    # test the save_data function
     parameters = {'learning_rate': 0.01, 'epochs': 1, 'momentum': 0.9, 'dropout': 0.2, 'model': 'cnn', 'optimizer': 'SGD', 'criterion': 'CrossEntropyLoss'}
     history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
-    pth_file_path = '/Users/stephandekker/workspace/pink_lady/20230602-143630_pinky.pt'
-    save_pth(pth_file_path, parameters, history)
+    pth_file_path = '20230602-143630_pinky.pt'
+    cosmos_save_data(pth_file_path, parameters, history)
 
 
     
