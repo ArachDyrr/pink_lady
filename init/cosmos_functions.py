@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 # function to load the hyperparameters from Cosmos NoSQL DB
-def cosmos_load_parameters(unique_id ,parameter, settings=settings):
+def load_parameters(unique_id ,parameter, settings=settings):
     
     # Retrieve settings from the config file
     endpoint_uri = settings['host']
@@ -32,7 +32,7 @@ def cosmos_load_parameters(unique_id ,parameter, settings=settings):
     return parameter
 
 # function to load the .pth file from Cosmos NoSQL DB
-def cosmos_load_pth(unique_id, local_save_path=None, settings=settings): 
+def load_pth(unique_id, local_save_path=None, settings=settings): 
         
         # Retrieve settings from the config file
         endpoint_uri = settings['host']
@@ -65,7 +65,7 @@ def cosmos_load_pth(unique_id, local_save_path=None, settings=settings):
         return output
 
 # function to save the .pth file to Cosmos NoSQL DB
-def cosmos_save_data(pth_data=None, parameters=None, run_result=None, settings=settings):   
+def save_data(pth_data=None, parameters=None, run_result=None, settings=settings):   
     
     # Retrieve settings from the config file
     endpoint_uri = settings['host']
