@@ -4,16 +4,15 @@ from config import *
 import torch
 from datetime import datetime
 
-# Retrieve settings from the config file
-endpoint_uri = settings['host']
-auth_key = settings['master_key']
-database_name = settings['database_id']
-container_name = settings['container_id']
-userAccountID = settings['userAccountID']
-
 
 # function to load the hyperparameters from Cosmos NoSQL DB
 def load_parameters(unique_id ,parameter, settings=settings):
+
+    # Retrieve settings from the config file
+    endpoint_uri = settings['host']
+    auth_key = settings['master_key']
+    database_name = settings['database_id']
+    container_name = settings['container_id']
     
     # Create the Cosmos DB client
     client = CosmosClient(endpoint_uri, auth_key)
@@ -34,32 +33,45 @@ def load_parameters(unique_id ,parameter, settings=settings):
 # function to load the .pth file from Cosmos NoSQL DB
 def load_pth(unique_id, local_save_path=None, settings=settings): 
         
-        # Create the Cosmos DB client
-        client = CosmosClient(endpoint_uri, auth_key)
+    endpoint_uri = settings['host']
+    auth_key = settings['master_key']
+    database_name = settings['database_id']
+    container_name = settings['container_id']
     
-        # Get the database and container
-        database = client.get_database_client(database_name)
-        container = database.get_container_client(container_name)
-    
-        # Retrieve the document containing the .pth data (assuming you know the unique_id)
-        item = container.read_item(item=unique_id, partition_key=unique_id)
-    
-        # Retrieve the pth_data from the item
-        pth_bytes = item['pth_data']
-    
-        # Decode and save the .pth data to a file
-        decoded_pth_data = base64.b64decode(pth_bytes)
 
-        # Save the variable as a .pth file
-        if local_save_path != None:
-            pth_file_path = f'{local_save_path}/{unique_id}.pth'
-            torch.save(decoded_pth_data, pth_file_path)
-    
-        output = decoded_pth_data
-        return output
+    # Create the Cosmos DB client
+    client = CosmosClient(endpoint_uri, auth_key)
+
+    # Get the database and container
+    database = client.get_database_client(database_name)
+    container = database.get_container_client(container_name)
+
+    # Retrieve the document containing the .pth data (assuming you know the unique_id)
+    item = container.read_item(item=unique_id, partition_key=unique_id)
+
+    # Retrieve the pth_data from the item
+    pth_bytes = item['pth_data']
+
+    # Decode and save the .pth data to a file
+    decoded_pth_data = base64.b64decode(pth_bytes)
+
+    # Save the variable as a .pth file
+    if local_save_path != None:
+        pth_file_path = f'{local_save_path}/{unique_id}.pth'
+        torch.save(decoded_pth_data, pth_file_path)
+
+    output = decoded_pth_data
+    return output
 
 # function to save the .pth file to Cosmos NoSQL DB
 def save_data(pth_data=None, parameters=None, run_result=None, settings=settings):   
+
+    # Retrieve settings from the config file
+    endpoint_uri = settings['host']
+    auth_key = settings['master_key']
+    database_name = settings['database_id']
+    container_name = settings['container_id']
+    userAccountID = settings['userAccountID']
 
     # Create the Cosmos DB client
     client = CosmosClient(endpoint_uri, auth_key)
