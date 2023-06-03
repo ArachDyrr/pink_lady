@@ -99,6 +99,29 @@ def save_data(pth_data=None, parameters=None, run_result=None, settings=settings
     container.create_item(document)
     print('Item with id \'{0}\' created'.format(unique_id))
 
+
+# A function SQL queries on the COSMOS DB
+def execute_sql_query(query, settings=settings):
+
+    # Retrieve settings from the config file
+    endpoint_uri = settings['host']
+    auth_key = settings['master_key']
+    database_name = settings['database_id']
+    container_name = settings['container_id']
+    
+    # Create the Cosmos DB client
+    client = CosmosClient(endpoint_uri, auth_key)
+
+    # Get the database and container
+    database = client.get_database_client(database_name)
+    container = database.get_container_client(container_name)
+
+    # Execute the SQL query
+    results = list(container.query_items(query, enable_cross_partition_query=True))
+
+    return results
+
+
 # test function of all functions in this file. 
 def run_tests():
     # test the load_parameters function
@@ -130,6 +153,11 @@ def run_tests():
     history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
     pth_file_path = '20230602-143630_pinky.pt'
     save_data(pth_file_path, parameters, history)
+
+    # test the execute_sql_query function
+    query = "SELECT c.id, c.parameters, c.run_result FROM c"  # pulls the entire db except for the pth_data
+    results = execute_sql_query(query)
+    print(results)
 
 
     
