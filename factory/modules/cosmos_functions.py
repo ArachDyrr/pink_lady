@@ -86,7 +86,7 @@ def save_data(pth_data=None, parameters=None, run_result=None, settings=settings
 
     # get the .pth file and encode it to base64
     if pth_data != None:
-        pth_file_path = '../../storage/data/saved/20230602-143630_pinky.pt'
+        pth_file_path = '/Users/stephandekker/workspace/pink_lady/storage/data/saved/module_test_files/saved/20230602_1600_pinky.pth'
         with open(pth_file_path, 'rb') as file:
             pth_data = file.read()
         pth_bytes = base64.b64encode(pth_data).decode('utf-8')
@@ -151,7 +151,7 @@ def run_tests():
     # test the save_data function
     parameters = {'learning_rate': 0.01, 'epochs': 1, 'momentum': 0.9, 'dropout': 0.2, 'model': 'cnn', 'optimizer': 'SGD', 'criterion': 'CrossEntropyLoss'}
     history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
-    pth_file_path = '/Users/stephandekker/workspace/pink_lady/storage/data/saved/module_test_files/saved/20230602-143630_pinky.pt'
+    pth_file_path = '/Users/stephandekker/workspace/pink_lady/storage/data/saved/module_test_files/saved/20230602_1600_pinky.pth'
     save_data(pth_file_path, parameters, history)
 
     # test the execute_sql_query function
