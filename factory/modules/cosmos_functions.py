@@ -1,6 +1,6 @@
 from azure.cosmos import CosmosClient
 import base64
-from config import *
+from modules.config import settings
 import torch
 from datetime import datetime
 
