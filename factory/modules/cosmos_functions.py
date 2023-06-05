@@ -1,6 +1,7 @@
 from azure.cosmos import CosmosClient
 import base64
-from modules.config import settings
+from modules.config import settings # for import use
+# from config import settings # use for testing
 import torch
 from datetime import datetime
 
@@ -64,7 +65,7 @@ def load_pth(unique_id, local_save_path=None, settings=settings):
     return output
 
 # function to save the .pth file to Cosmos NoSQL DB
-def save_data(pth_data=None, parameters=None, run_result=None, settings=settings):   
+def save_data(pth_data=None, parameters=None, run_result=None, unique_ID=None, settings=settings):   
 
     # Retrieve settings from the config file
     endpoint_uri = settings['host']
@@ -81,23 +82,27 @@ def save_data(pth_data=None, parameters=None, run_result=None, settings=settings
     container = database.get_container_client(container_name)
 
     # create a timestamp and a unique ID
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-    unique_id = f'{timestamp}_{userAccountID}'
+    if unique_ID == None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_id = f'{timestamp}_{userAccountID}'
+    else:
+        unique_id = unique_ID
 
     # get the .pth file and encode it to base64
     if pth_data != None:
-        pth_file_path = '../../storage/data/saved/module_test_files/saved/20230602_1600_pinky.pth'
+        pth_file_path = pth_data
         with open(pth_file_path, 'rb') as file:
             pth_data = file.read()
         pth_bytes = base64.b64encode(pth_data).decode('utf-8')
-
-
+    
 
     # create the item to be saved on Cosmos DB
     # document = {'id': unique_id, 'pth_data': pth_bytes, 'runtime': timestamp, 'run_id': runx['run_id'], 'model': runx['model'], 'learn_rate': runx['learn_rate'], 'epochs': runx['epochs'], 'test_loss': runx['test_loss'], 'test_loss_epoch': runx['test_loss_epoch'], 'train_loss': runx['train_loss'], 'test_acc': runx['test_acc'], 'train_acc': runx['train_acc'], 'test_acc_epoch': runx['test_acc_epoch'], 'optimizer': runx['optimizer'], 'dropout': runx['dropout'], 'momentum': runx['momentum'], 'batch_size': runx['batch_size'], 'num_workers': runx['num_workers'], 'seed': runx['seed']}
     document = {'id': unique_id, 'pth_data': pth_bytes, 'parameters': parameters, 'run_result': run_result}
     container.create_item(document)
     print('Item with id \'{0}\' created'.format(unique_id))
+
+    return unique_id
 
 
 # A function SQL queries on the COSMOS DB
@@ -124,35 +129,34 @@ def execute_sql_query(query, settings=settings):
 
 # test function of all functions in this file. 
 def run_tests():
-    # test the load_parameters function
-    unique_id = "20230602_1600_pinky"
-    id = 'id'
-    parameter = 'parameters'
-    run_result = 'run_result'  
-    id = load_parameters(unique_id, id) 
-    run_result = load_parameters(unique_id, run_result)
-    parameter = load_parameters(unique_id, parameter)
-    print(f'''
-    id = {id}
-    run_result = {run_result}
-    parameter = {parameter}
+    # # test the load_parameters function
+    # unique_id = "20230602_1600_pinky"
+    # id = 'id'
+    # parameter = 'parameters'
+    # run_result = 'run_result'  
+    # id = load_parameters(unique_id, id) 
+    # run_result = load_parameters(unique_id, run_result)
+    # parameter = load_parameters(unique_id, parameter)
+    # print(f'''
+    # id = {id}
+    # run_result = {run_result}
+    # parameter = {parameter}
 
-    ''')
+    # ''')
     
-    # test the load_pth function
-    local_save_path = '../../storage/data/saved/module_test_files/saved'
-    unique_id = "20230602_1600_pinky"
-    pth = load_pth(unique_id, local_save_path)
-    print(pth)
-    print()
-    
+    # # test the load_pth function
+    # local_save_path = './storage/data/saved/module_test_files/loaded'
+    # unique_id = "20230602_1600_pinky"
+    # pth = load_pth(unique_id, local_save_path)
+    # print(pth)
+    # print()
 
-    
-    # test the save_data function
-    parameters = {'learning_rate': 0.01, 'epochs': 1, 'momentum': 0.9, 'dropout': 0.2, 'model': 'cnn', 'optimizer': 'SGD', 'criterion': 'CrossEntropyLoss'}
-    history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
-    pth_file_path = '../../storage/data/saved/module_test_files/saved/20230602_1600_pinky.pth'
-    save_data(pth_file_path, parameters, history)
+    # # test the save_data function
+    # parameters = {'learning_rate': 0.01, 'epochs': 1, 'momentum': 0.9, 'dropout': 0.2, 'model': 'cnn', 'optimizer': 'SGD', 'criterion': 'CrossEntropyLoss'}
+    # history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
+    # pth_file_path = '../../storage/data/saved/module_test_files/saved/20230602_1600_pinky.pth'
+    # save_data(pth_file_path, parameters, history)
+
 
     # test the execute_sql_query function
     query = "SELECT c.id, c.parameters, c.run_result FROM c"  # pulls the entire db except for the pth_data
