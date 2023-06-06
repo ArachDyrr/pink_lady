@@ -1,5 +1,8 @@
-# pink_lady
+# Pink Lady
 Project 3 of Make AI Work cohort 2
+
+# Datasets used
+Original: https://github.com/ArachDyrr/pink_lady/blob/main/apple_data_original.zip
 
 # The requirements can be found in the Pipfile
 This repo is made with pipenv in mind. Feel free to use that as well, or not. 
@@ -12,3 +15,5 @@ To store data the code in cosmoclient.py can be used. It requires a config.py th
 # interfacing with WandB is WIP
 
 # For the rest look around and inform me your questions. 
+
+# Yolo challenge accepted!
