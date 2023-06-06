@@ -1,10 +1,13 @@
 from azure.cosmos import CosmosClient
 import base64
-from modules.config import settings # for import use
-# from config import settings # use for testing
 import torch
 from datetime import datetime
 
+# quick and dirty fix for import pathing. 
+if __name__ == '__main__':
+    from config import settings # use for testing
+else:
+    from modules.config import settings # use for testing
 
 # function to load the hyperparameters from Cosmos NoSQL DB
 def load_parameters(unique_id ,parameter, settings=settings):
