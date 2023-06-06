@@ -171,3 +171,4 @@ noSQL/pth/imported
 # MacOS files not needed to be added to git. 
 .DS_Store
 
+apple_disease_classification
