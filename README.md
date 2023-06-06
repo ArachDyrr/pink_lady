@@ -3,6 +3,7 @@ Project 3 of Make AI Work cohort 2
 
 # Datasets used
 Original: https://github.com/ArachDyrr/pink_lady/blob/main/apple_data_original.zip
+Cropped: https://github.com/ArachDyrr/pink_lady/blob/main/apple_cropped.zip
 
 # The requirements can be found in the Pipfile
 This repo is made with pipenv in mind. Feel free to use that as well, or not. 
