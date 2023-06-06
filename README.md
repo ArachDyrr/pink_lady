@@ -12,3 +12,5 @@ To store data the code in cosmoclient.py can be used. It requires a config.py th
 # interfacing with WandB is WIP
 
 # For the rest look around and inform me your questions. 
+
+# Yolo challenge accepted!
