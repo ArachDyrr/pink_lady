@@ -1,3 +1,4 @@
+![header](https://github.com/ArachDyrr/pink_lady/blob/main/header.png)
 # Pink Lady
 Project 3 of Make AI Work cohort 2
 
