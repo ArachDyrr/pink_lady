@@ -177,3 +177,4 @@ factory/modules/config.py
 storage/data/generated/
 apple_disease_classification
 
+factory/wandb
