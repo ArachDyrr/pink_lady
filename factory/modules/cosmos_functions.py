@@ -90,13 +90,14 @@ def save_data(pth_data=None, parameters=None, run_result=None, unique_ID=None, s
         unique_id = f'{timestamp}_{userAccountID}'
     else:
         unique_id = unique_ID
-
+    
     # get the .pth file and encode it to base64
+    pth_bytes = None
     if pth_data != None:
         pth_file_path = pth_data
         with open(pth_file_path, 'rb') as file:
             pth_data = file.read()
-        pth_bytes = base64.b64encode(pth_data).decode('utf-8')
+            pth_bytes = base64.b64encode(pth_data).decode('utf-8')
     
 
     # create the item to be saved on Cosmos DB
@@ -154,17 +155,17 @@ def run_tests():
     # print(pth)
     # print()
 
-    # # test the save_data function
-    # parameters = {'learning_rate': 0.01, 'epochs': 1, 'momentum': 0.9, 'dropout': 0.2, 'model': 'cnn', 'optimizer': 'SGD', 'criterion': 'CrossEntropyLoss'}
-    # history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
-    # pth_file_path = '../../storage/data/saved/module_test_files/saved/20230602_1600_pinky.pth'
-    # save_data(pth_file_path, parameters, history)
+    # test the save_data function
+    parameters = {'learning_rate': 0.01, 'epochs': 1, 'momentum': 0.9, 'dropout': 0.2, 'model': 'cnn', 'optimizer': 'SGD', 'criterion': 'CrossEntropyLoss'}
+    history = {'n_epochs': 1, 'loss': {'train': [2.1098746801053405], 'val': [1.8478429771352698]}, 'acc': {'train': [19.64021164545937], 'val': [23.580246907928842]}}
+    pth_file_path = '/Users/stephandekker/workspace/pink_lady/storage/data/saved/module_test_files/saved/20230602-163352_pinky.pt'
+    save_data(pth_data=pth_file_path)
 
 
-    # test the execute_sql_query function
-    query = "SELECT c.id, c.parameters, c.run_result FROM c"  # pulls the entire db except for the pth_data
-    results = execute_sql_query(query)
-    print(results)
+    # # test the execute_sql_query function
+    # query = "SELECT c.id, c.parameters, c.run_result FROM c"  # pulls the entire db except for the pth_data
+    # results = execute_sql_query(query)
+    # print(results)
 
 
     
