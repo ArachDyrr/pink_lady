@@ -13,6 +13,8 @@ matplotlib = "*"
 numpy = "*"
 pandas = "*"
 azure-cosmos = "*"
+streamlit = "*"
+sklearn = "*"
 
 [dev-packages]
 ipykernel = "*"
