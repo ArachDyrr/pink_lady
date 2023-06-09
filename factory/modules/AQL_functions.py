@@ -66,12 +66,13 @@ def AQL_classification(batchList, classification):
     if sampleSizeCheck != 0:
         raise ValueError("The batchList and the sampleSize do not match")
     reject = sum(batchList)
-    print(reject)   
-    for i in classification[1]:
-            if reject >= classification[0][i].values():
-                return f'This lot is class_{classification[0][i].keys()}'
+    print(reject)
+    for key, value in classification[1].items():
+        if value <= reject:
+            return f'This lot is class_{key}'
     
-    return f'This lot is rejected'
+    return 'This lot is rejected'
+    
 
     
 
