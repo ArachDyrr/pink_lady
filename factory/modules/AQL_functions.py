@@ -65,9 +65,13 @@ def AQL_classification(batchList, classification):
     sampleSizeCheck = len(batchList) - classification[0]
     if sampleSizeCheck != 0:
         raise ValueError("The batchList and the sampleSize do not match")
-    else:
-        something = 'pie'
-    return something
+    reject = sum(batchList)
+    print(reject)   
+    for i in classification[1]:
+            if reject >= classification[0][i].values():
+                return f'This lot is class_{classification[0][i].keys()}'
+    
+    return f'This lot is rejected'
 
     
 
@@ -106,13 +110,19 @@ def testfunction():
     AQL_classifierTupleList = [(500, 'I', [0.4, 6.5, 15])]
     # make a list of 32 1's and 0's to test the AQL_classifier
     testlist = []
-    classification = AQL_classification( AQL_classifierTupleList)
-    AQL_selector(AQL_classifierTupleList[0][0], AQL_classifierTupleList[0][1], AQL_classifierTupleList[0][2][0])
-    sampleTestValueList = [1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    AQL_classification(sampleTestValueList)
+    classification = AQL_classificationmaker( AQL_classifierTupleList[0][0], AQL_classifierTupleList[0][1], AQL_classifierTupleList[0][2])
+    # print(classification)
+    
+    # .make a list of the classes in a dictionary
 
+    # print(classification[1].keys())
+    # print(classification[1].values())
+    
+    sampleTestValueList = [1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    Klasse = AQL_classification(sampleTestValueList, classification)
+    print (Klasse)
 
-    print (len(sampleTestValueList))
+  
 
 ##### fix last part! #####
     
