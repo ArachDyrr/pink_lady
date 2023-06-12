@@ -15,6 +15,7 @@ pandas = "*"
 azure-cosmos = "*"
 streamlit = "*"
 sklearn = "*"
+sentence-transformers = "*"
 
 [dev-packages]
 ipykernel = "*"
