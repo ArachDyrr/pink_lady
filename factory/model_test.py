@@ -1,6 +1,6 @@
 # imports
 import torch
-from modules.myFunctions import set_device, AQL_test_model
+from modules.myFunctions import set_device, test_model
 
 # Load the test dataset
 dataset_path = "./storage/images/apple_extended_unedited/Test"
@@ -12,4 +12,4 @@ device = set_device()
 model = torch.load(imported_model_state_path)
 
 # test the model
-AQL_test_model(model, dataset_path, device)
+test_model(model, dataset_path, device)

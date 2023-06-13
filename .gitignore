@@ -171,17 +171,10 @@ noSQL/pth/imported
 # MacOS files not needed to be added to git. 
 .DS_Store
 
-storage/images/apple_disease_classification_unedited
-storage/images/apple_disease_classification
-factory/modules/config.py
+# local data
+storage/images/
 storage/data/generated
-apple_disease_classification
 
+factory/modules/config.py
+# wandb local data
 factory/wandb
-storage/images/apple_disease_classification_3
-
-storage/images/apple_cropped
-
-storage/images/apple_resized_128
-storage/images/apple_extended_unedited
-storage/images/heic_apples
