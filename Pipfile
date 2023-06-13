@@ -16,6 +16,7 @@ azure-cosmos = "*"
 streamlit = "*"
 sklearn = "*"
 sentence-transformers = "*"
+wand = "*"
 
 [dev-packages]
 ipykernel = "*"
