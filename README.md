@@ -19,3 +19,6 @@ To store data the code in cosmoclient.py can be used. It requires a config.py th
 # For the rest look around and inform me your questions. 
 
 # Yolo challenge accepted!
+
+# WIP AQL: .pdf, mail
+# WIP TRAIN: .py
