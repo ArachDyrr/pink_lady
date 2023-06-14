@@ -185,3 +185,6 @@ storage/images/apple_cropped
 storage/images/apple_resized_128
 storage/images/apple_extended_unedited
 storage/images/heic_apples
+factory/modules/mailConfig.py
+test_hellow_world.pdf
+storage/data/pdf

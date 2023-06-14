@@ -17,6 +17,7 @@ streamlit = "*"
 sklearn = "*"
 sentence-transformers = "*"
 wand = "*"
+reportlab = "*"
 
 [dev-packages]
 ipykernel = "*"

@@ -121,6 +121,7 @@ def test_model(model, datasetPath,device):
     print("Confusion Matrix:")
     print(confusion_matrix)
 
+
   
 
     # get the AQL label
@@ -136,6 +137,18 @@ def test_model(model, datasetPath,device):
     print(f'The AQL label is: Class_{x}')
     # print()
     # print(len(test_dataloader))
+
+    report_dict = {"Overall accuracy": f"Overall accuracy: {overall_accuracy:.4f}",
+                    "Normal Apple accuracy": f"Normal Apple accuracy: {normal_accuracy:.4f}",
+                    "Abnormal Apple accuracy": f"Abnormal Apple accuracy: {abnormal_accuracy:.4f}",
+                    "Labels": labels_dict,
+                    "Confusion Matrix": confusion_matrix,
+                    "quality from lot:": f'From a lot of {lotsize} in accordance quality level {test_inspection_lvl}',
+                    "batch_size": f'A batch of {batch_size} has been randomly drawn.',
+                    "rejected apples": f'The number of rejected apples is: {rejected_apples}',
+                    "AQL label": f'The AQL label is: Class_{x}'
+                    }
+    return report_dict
 
 
 
