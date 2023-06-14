@@ -5,12 +5,14 @@ import torch
 import torchvision.transforms as T
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
-
+import os
+import shutil
 # quick and dirty fix for import pathing. 
 if __name__ == '__main__':
     from MyAQLclass import MyAQLclass # use for testing
 else:
     from modules.MyAQLclass import MyAQLclass # use for testing
+
 
 # function to set device to GPU/mps if available
 def set_device():
@@ -20,9 +22,8 @@ def set_device():
     else "mps"
     if torch.backends.mps.is_available()
     else "cpu")
-    x = torch.ones(1, device=device)
 
-    print(f"Device is '{device}' Thus a tensor will look like this: {x}")
+    print(f"Device is '{device}'")
     return device
 
 # function to test the model
@@ -129,24 +130,25 @@ def test_model(model, datasetPath,device):
     
     
     AQLtest.test_input = rejected_apples
-    x=AQLtest.output()
+    AQL_label=AQLtest.output()
     
     print(f'From a lot of {lotsize} in accordance quality level {test_inspection_lvl},')
     print(f'a batch of {batch_size} has been randomly drawn.')
     print(f'the number of rejected apples is: {rejected_apples}')
-    print(f'The AQL label is: Class_{x}')
+    print(f'The AQL label is: Class_{AQL_label}')
     # print()
     # print(len(test_dataloader))
 
-    report_dict = {"Overall accuracy": f"Overall accuracy: {overall_accuracy:.4f}",
-                    "Normal Apple accuracy": f"Normal Apple accuracy: {normal_accuracy:.4f}",
-                    "Abnormal Apple accuracy": f"Abnormal Apple accuracy: {abnormal_accuracy:.4f}",
-                    "Labels": labels_dict,
-                    "Confusion Matrix": confusion_matrix,
-                    "quality from lot:": f'From a lot of {lotsize} in accordance quality level {test_inspection_lvl}',
-                    "batch_size": f'A batch of {batch_size} has been randomly drawn.',
-                    "rejected apples": f'The number of rejected apples is: {rejected_apples}',
-                    "AQL label": f'The AQL label is: Class_{x}'
+    report_dict = {"Overall accuracy" : overall_accuracy,
+                    "Normal Apple accuracy" : normal_accuracy,
+                    "Abnormal Apple accuracy" : abnormal_accuracy,
+                    "Labels" : labels_dict,
+                    "Confusion Matrix" : confusion_matrix,
+                    "lots size" : lotsize,
+                    "test_inspection_lvl" : test_inspection_lvl,
+                    "batch_size" : batch_size,
+                    "rejected apples" : rejected_apples,
+                    "AQL label" : AQL_label
                     }
     return report_dict
 
@@ -177,10 +179,6 @@ def number_to_roman(number):
             number -= value
 
     return roman_numeral
-
-
-import os
-import shutil
 
 
 # Move all .heic files from a source folder to a destination folder
