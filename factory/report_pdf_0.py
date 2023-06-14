@@ -1,8 +1,8 @@
 # Generate a pdf report of the model performance on the test dataset
 # imports
 import torch
-from modules.myFunctions import set_device, test_model
-from modules.pdf_generator import generate_pdf
+from modules.myFunctions import set_device, AQL_test_model
+from modules.pdf_modules.pdf_generator import generate_pdf
 
 # Load the test dataset
 dataset_path = "./storage/images/apple_resized_128/Test"
@@ -14,8 +14,10 @@ device = set_device()
 model = torch.load(imported_model_state_path)
 
 # test the model
-report = test_model(model, dataset_path, device)
+report = AQL_test_model(model, dataset_path, device)
 
 test_file_name = 'report_test'
 
+print (report)
+print (type(report))
 generate_pdf(test_file_name, report)
