@@ -14,6 +14,7 @@ else:
     from modules.MyAQLclass import MyAQLclass # use for testing
 
 
+
 # function to set device to GPU/mps if available
 def set_device():
     device = (
@@ -153,7 +154,7 @@ def AQL_test_model(model, datasetPath,device):
     return report_dict
 
 
-def test_model(model, datasetPath,device):
+def test_model(model, datasetPath,device, batch_size=None):
     model.eval()    
 
 
@@ -177,7 +178,12 @@ def test_model(model, datasetPath,device):
     
 
     dataset = ImageFolder(dataset_path, transform=transform)
-    batch_size = len(dataset)
+    
+    if batch_size is None:
+        batch_size = len(dataset)
+    else:
+        batch_size = batch_size
+
     test_dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     labels_dict = dataset.class_to_idx
@@ -246,7 +252,14 @@ def test_model(model, datasetPath,device):
     print("Confusion Matrix:")
     print(confusion_matrix)
 
-  
+    test_dict = {"Overall accuracy" : overall_accuracy,
+                    "Normal Apple accuracy" : normal_accuracy,
+                    "Abnormal Apple accuracy" : abnormal_accuracy,
+                    "Labels" : labels_dict,
+                    "Confusion Matrix" : confusion_matrix,
+                    "batch_size" : batch_size
+                    }
+    return test_dict
 
 
 
@@ -334,3 +347,15 @@ def show_batch(test_d):
 # tof = '/Users/stephandekker/workspace/pink_lady/storage/images/apple_extended_unedited/Test/Normal_Apple'
 
 # move_files(fromf, tof, '.jpg')
+
+# acces the optimiser
+def optimiser_state(optimizer):
+   # Access the optimizer's state dictionary
+    optimizer_state = optimizer.state_dict()
+
+    # Print the parameter groups
+    for i, param_group in enumerate(optimizer_state['param_groups']):
+        print(f"Parameter Group {i+1}:")
+        for key, value in param_group.items():
+            print(f"    {key}: {value}")
+        print()
