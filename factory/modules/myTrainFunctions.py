@@ -18,7 +18,7 @@ def set_device():
 
 
 # function to train the model
-def train(model, train_loader, val_loader, criterion, optimizer, n_epochs, device, model_file_name='model.pt',local_save_path='storage/data/generated'):
+def train(model, train_loader, val_loader, criterion, optimizer, n_epochs, device, model_file_name='model.pt',local_save_path='/storage/data/generated'):
     # initialize container variable for model performance results per epoch
     history = {
         'n_epochs': n_epochs,
@@ -54,9 +54,9 @@ def train(model, train_loader, val_loader, criterion, optimizer, n_epochs, devic
     
     early_stopping_counter = 0
 
-    model_safe_loss = f'../{locally_saved_path}/{model_file_name_loss}'
-    model_safe_acc = f'../{locally_saved_path}/{model_file_name_acc}'
-    model_safe_final = f'../{locally_saved_path}/{final_model_file_name}'
+    model_safe_loss = f'.{locally_saved_path}/{model_file_name_loss}'
+    model_safe_acc = f'.{locally_saved_path}/{model_file_name_acc}'
+    model_safe_final = f'.{locally_saved_path}/{final_model_file_name}'
 
     # loop per epoch
     for epoch in tqdm(range(n_epochs)):

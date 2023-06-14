@@ -12,8 +12,8 @@ import wandb
 
 
 # hyperparameters
-learning_rate = 0.004
-epochs = 5
+learning_rate = 0.0001
+epochs = 50
 betas = (0.9, 0.999)
 momentum = 0.1
 dropout = 0.1 # does not influence resnets dropout
@@ -96,9 +96,7 @@ wandb.init(
 
 # train the model
 history = train(
-    model, train_loader, val_loader, criterion, optimizer, epochs, device, epoch_loss,
-    model_file_name=saveFileName
-)
+    model, train_loader, val_loader, criterion, optimizer, epochs, device, epoch_loss)
 
 # [optional] finish the wandb run, necessary in notebooks
 wandb.finish()
