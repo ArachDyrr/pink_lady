@@ -176,7 +176,11 @@ storage/images/
 storage/data/generated
 
 factory/modules/config.py
+factory/modules/mailConfig.py
+
 # wandb local data
 factory/wandb
 storage/images
 storage/data/pdf
+
+wandb
