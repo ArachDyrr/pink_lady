@@ -7,48 +7,51 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 import os
 import shutil
-# quick and dirty fix for import pathing. 
-if __name__ == '__main__':
-    from MyAQLclass import MyAQLclass # use for testing
-else:
-    from modules.MyAQLclass import MyAQLclass # use for testing
 
+# quick and dirty fix for import pathing.
+if __name__ == "__main__":
+    from MyAQLclass import MyAQLclass  # use for testing
+else:
+    from modules.MyAQLclass import MyAQLclass  # use for testing
 
 
 # function to set device to GPU/mps if available
 def set_device():
     device = (
-    "cuda"
-    if torch.cuda.is_available()
-    else "mps"
-    if torch.backends.mps.is_available()
-    else "cpu")
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
 
     print(f"Device is '{device}'")
     return device
 
-# function to test the AQL score and the model
-def AQL_test_model(model, datasetPath,device):
-    model.eval()    
 
+# function to test the AQL score and the model
+def AQL_test_model(model, datasetPath, device):
+    model.eval()
 
     # Load the test dataset
     dataset_path = datasetPath
-    transform = T.Compose([
-    T.ToTensor(),
-    T.transforms.Resize((256, 256), antialias=True),
-    T.transforms.RandomCrop((224, 224)),
-    # T.transforms.RandomHorizontalFlip(),
-    # T.transforms.RandomVerticalFlip(),
-    # T.transforms.RandomRotation(25),  # Randomly rotate the image by a maximum of 30 degrees
-    # T.transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Slightly change the image color
-    # T.transforms.RandomGrayscale(p=0.1),  # Randomly convert the image to grayscale with a probability of 10%
-    # T.transforms.RandomErasing(p=0.1, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),  # Randomly erase rectangular patches of the image with a probability of 10%
-    # # T.transforms.RandomPerspective(distortion_scale=0.2, p=0.1, interpolation=3),  # Randomly apply a perspective transformation to the image with a probability of 10%
-    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    
-    #pull the relevant AQL data
+    transform = T.Compose(
+        [
+            T.ToTensor(),
+            T.transforms.Resize((256, 256), antialias=True),
+            T.transforms.RandomCrop((224, 224)),
+            # T.transforms.RandomHorizontalFlip(),
+            # T.transforms.RandomVerticalFlip(),
+            # T.transforms.RandomRotation(25),  # Randomly rotate the image by a maximum of 30 degrees
+            # T.transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Slightly change the image color
+            # T.transforms.RandomGrayscale(p=0.1),  # Randomly convert the image to grayscale with a probability of 10%
+            # T.transforms.RandomErasing(p=0.1, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),  # Randomly erase rectangular patches of the image with a probability of 10%
+            # # T.transforms.RandomPerspective(distortion_scale=0.2, p=0.1, interpolation=3),  # Randomly apply a perspective transformation to the image with a probability of 10%
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
+
+    # pull the relevant AQL data
     AQLtest = MyAQLclass()
     lotsize = AQLtest.get_lotsize()
     test_inspection_lvl = AQLtest.get_test_inspection_lvl()
@@ -88,17 +91,21 @@ def AQL_test_model(model, datasetPath,device):
         overall_total += labels.size(0)
 
         # Calculate accuracy for normal apples vs. abnormal apples
-        normal_mask = labels == labels_dict['Normal_Apple']
+        normal_mask = labels == labels_dict["Normal_Apple"]
         abnormal_mask = ~normal_mask
         normal_correct += (predicted[normal_mask] == labels[normal_mask]).sum().item()
         normal_total += normal_mask.sum().item()
-        abnormal_correct += (predicted[abnormal_mask] == labels[abnormal_mask]).sum().item()
+        abnormal_correct += (
+            (predicted[abnormal_mask] == labels[abnormal_mask]).sum().item()
+        )
         abnormal_total += abnormal_mask.sum().item()
 
         # Update the confusion matrix
-        for true_label, predicted_label in zip(labels.cpu().numpy(), predicted.cpu().numpy()):
+        for true_label, predicted_label in zip(
+            labels.cpu().numpy(), predicted.cpu().numpy()
+        ):
             confusion_matrix[true_label][predicted_label] += 1
-        
+
         # Break the loop after processing the first batch
         if batch_idx == 0:
             break
@@ -108,7 +115,9 @@ def AQL_test_model(model, datasetPath,device):
 
     # Calculate accuracy for normal apples and abnormal apples separately
     normal_accuracy = normal_correct / normal_total if normal_total != 0 else 0.0
-    abnormal_accuracy = abnormal_correct / abnormal_total if abnormal_total != 0 else 0.0
+    abnormal_accuracy = (
+        abnormal_correct / abnormal_total if abnormal_total != 0 else 0.0
+    )
 
     # Print overall accuracy
     print(f"Overall accuracy: {overall_accuracy:.4f}")
@@ -123,62 +132,57 @@ def AQL_test_model(model, datasetPath,device):
     print("Confusion Matrix:")
     print(confusion_matrix)
 
-
-  
-
     # get the AQL label
-    rejected_apples = np.sum(confusion_matrix)-np.sum(confusion_matrix[1])
-    
-    
+    rejected_apples = np.sum(confusion_matrix) - np.sum(confusion_matrix[1])
+
     AQLtest.test_input = rejected_apples
-    AQL_label=AQLtest.output()
-    
-    print(f'From a lot of {lotsize} in accordance quality level {test_inspection_lvl},')
-    print(f'a batch of {batch_size} has been randomly drawn.')
-    print(f'the number of rejected apples is: {rejected_apples}')
-    print(f'The AQL label is: Class_{AQL_label}')
+    AQL_label = AQLtest.output()
+
+    print(f"From a lot of {lotsize} in accordance quality level {test_inspection_lvl},")
+    print(f"a batch of {batch_size} has been randomly drawn.")
+    print(f"the number of rejected apples is: {rejected_apples}")
+    print(f"The AQL label is: Class_{AQL_label}")
     # print()
     # print(len(test_dataloader))
 
-    report_dict = {"Overall accuracy" : overall_accuracy,
-                    "Normal Apple accuracy" : normal_accuracy,
-                    "Abnormal Apple accuracy" : abnormal_accuracy,
-                    "Labels" : labels_dict,
-                    "Confusion Matrix" : confusion_matrix,
-                    "lots size" : lotsize,
-                    "test_inspection_lvl" : test_inspection_lvl,
-                    "batch_size" : batch_size,
-                    "rejected apples" : rejected_apples,
-                    "AQL label" : AQL_label
-                    }
+    report_dict = {
+        "Overall accuracy": overall_accuracy,
+        "Normal Apple accuracy": normal_accuracy,
+        "Abnormal Apple accuracy": abnormal_accuracy,
+        "Labels": labels_dict,
+        "Confusion Matrix": confusion_matrix,
+        "lots size": lotsize,
+        "test_inspection_lvl": test_inspection_lvl,
+        "batch_size": batch_size,
+        "rejected apples": rejected_apples,
+        "AQL label": AQL_label,
+    }
     return report_dict
 
 
-def test_model(model, datasetPath,device, batch_size=None):
-    model.eval()    
-
+def test_model(model, datasetPath, device, batch_size=None):
+    model.eval()
 
     # Load the test dataset
     dataset_path = datasetPath
-    transform = T.Compose([
-    T.ToTensor(),
-    T.transforms.Resize((256, 256), antialias=True),
-    T.transforms.RandomCrop((224, 224)),
-    # T.transforms.RandomHorizontalFlip(),
-    # T.transforms.RandomVerticalFlip(),
-    # T.transforms.RandomRotation(25),  # Randomly rotate the image by a maximum of 30 degrees
-    # T.transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Slightly change the image color
-    # T.transforms.RandomGrayscale(p=0.1),  # Randomly convert the image to grayscale with a probability of 10%
-    # T.transforms.RandomErasing(p=0.1, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),  # Randomly erase rectangular patches of the image with a probability of 10%
-    # # T.transforms.RandomPerspective(distortion_scale=0.2, p=0.1, interpolation=3),  # Randomly apply a perspective transformation to the image with a probability of 10%
-    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    
-   
-    
+    transform = T.Compose(
+        [
+            T.ToTensor(),
+            T.transforms.Resize((256, 256), antialias=True),
+            T.transforms.RandomCrop((224, 224)),
+            # T.transforms.RandomHorizontalFlip(),
+            # T.transforms.RandomVerticalFlip(),
+            # T.transforms.RandomRotation(25),  # Randomly rotate the image by a maximum of 30 degrees
+            # T.transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Slightly change the image color
+            # T.transforms.RandomGrayscale(p=0.1),  # Randomly convert the image to grayscale with a probability of 10%
+            # T.transforms.RandomErasing(p=0.1, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),  # Randomly erase rectangular patches of the image with a probability of 10%
+            # # T.transforms.RandomPerspective(distortion_scale=0.2, p=0.1, interpolation=3),  # Randomly apply a perspective transformation to the image with a probability of 10%
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
 
     dataset = ImageFolder(dataset_path, transform=transform)
-    
+
     if batch_size is None:
         batch_size = len(dataset)
     else:
@@ -217,17 +221,21 @@ def test_model(model, datasetPath,device, batch_size=None):
         overall_total += labels.size(0)
 
         # Calculate accuracy for normal apples vs. abnormal apples
-        normal_mask = labels == labels_dict['Normal_Apple']
+        normal_mask = labels == labels_dict["Normal_Apple"]
         abnormal_mask = ~normal_mask
         normal_correct += (predicted[normal_mask] == labels[normal_mask]).sum().item()
         normal_total += normal_mask.sum().item()
-        abnormal_correct += (predicted[abnormal_mask] == labels[abnormal_mask]).sum().item()
+        abnormal_correct += (
+            (predicted[abnormal_mask] == labels[abnormal_mask]).sum().item()
+        )
         abnormal_total += abnormal_mask.sum().item()
 
         # Update the confusion matrix
-        for true_label, predicted_label in zip(labels.cpu().numpy(), predicted.cpu().numpy()):
+        for true_label, predicted_label in zip(
+            labels.cpu().numpy(), predicted.cpu().numpy()
+        ):
             confusion_matrix[true_label][predicted_label] += 1
-        
+
         # Break the loop after processing the first batch
         if batch_idx == 0:
             break
@@ -237,7 +245,9 @@ def test_model(model, datasetPath,device, batch_size=None):
 
     # Calculate accuracy for normal apples and abnormal apples separately
     normal_accuracy = normal_correct / normal_total if normal_total != 0 else 0.0
-    abnormal_accuracy = abnormal_correct / abnormal_total if abnormal_total != 0 else 0.0
+    abnormal_accuracy = (
+        abnormal_correct / abnormal_total if abnormal_total != 0 else 0.0
+    )
 
     # Print overall accuracy
     print(f"Overall accuracy: {overall_accuracy:.4f}")
@@ -252,37 +262,36 @@ def test_model(model, datasetPath,device, batch_size=None):
     print("Confusion Matrix:")
     print(confusion_matrix)
 
-    test_dict = {"Overall accuracy" : overall_accuracy,
-                    "Normal Apple accuracy" : normal_accuracy,
-                    "Abnormal Apple accuracy" : abnormal_accuracy,
-                    "Labels" : labels_dict,
-                    "Confusion Matrix" : confusion_matrix,
-                    "batch_size" : batch_size
-                    }
+    test_dict = {
+        "Overall accuracy": overall_accuracy,
+        "Normal Apple accuracy": normal_accuracy,
+        "Abnormal Apple accuracy": abnormal_accuracy,
+        "Labels": labels_dict,
+        "Confusion Matrix": confusion_matrix,
+        "batch_size": batch_size,
+    }
     return test_dict
-
-
 
 
 # to convert a number to a roman numeral
 def number_to_roman(number):
     roman_mapping = {
-        1000: 'M',
-        900: 'CM',
-        500: 'D',
-        400: 'CD',
-        100: 'C',
-        90: 'XC',
-        50: 'L',
-        40: 'XL',
-        10: 'X',
-        9: 'IX',
-        5: 'V',
-        4: 'IV',
-        1: 'I'
+        1000: "M",
+        900: "CM",
+        500: "D",
+        400: "CD",
+        100: "C",
+        90: "XC",
+        50: "L",
+        40: "XL",
+        10: "X",
+        9: "IX",
+        5: "V",
+        4: "IV",
+        1: "I",
     }
 
-    roman_numeral = ''
+    roman_numeral = ""
     for value, symbol in roman_mapping.items():
         while number >= value:
             roman_numeral += symbol
@@ -292,9 +301,7 @@ def number_to_roman(number):
 
 
 # Move all .heic files from a source folder to a destination folder
-def move_files(source_folder, destination_folder, file_extension='.heic'):
-
-
+def move_files(source_folder, destination_folder, file_extension=".heic"):
     # Create the destination folder if it doesn't exist
     # os.makedirs(destination_folder, exist_ok=True)
 
@@ -320,6 +327,7 @@ def reverse_normalize(image):
         image[i] = (image[i] * std[i]) + mean[i]
     return image
 
+
 def show_batch(test_d):
     # Get the first batch of data from the DataLoader
     data_test = next(iter(test_d))
@@ -336,25 +344,26 @@ def show_batch(test_d):
 
     # Display the image
     plt.imshow(np_image_test)
-    plt.title(f'{label_test}, {image_test.shape}')
-    plt.axis('off')
+    plt.title(f"{label_test}, {image_test.shape}")
+    plt.axis("off")
 
     # Show the plot
     plt.show()
 
+
 # # test for function to move files from one folder to another
 # fromf = '/Users/stephandekker/workspace/pink_lady/storage/images/heic_apples'
 # tof = '/Users/stephandekker/workspace/pink_lady/storage/images/apple_extended_unedited/Test/Normal_Apple'
-
 # move_files(fromf, tof, '.jpg')
+
 
 # acces the optimiser
 def optimiser_state(optimizer):
-   # Access the optimizer's state dictionary
+    # Access the optimizer's state dictionary
     optimizer_state = optimizer.state_dict()
 
     # Print the parameter groups
-    for i, param_group in enumerate(optimizer_state['param_groups']):
+    for i, param_group in enumerate(optimizer_state["param_groups"]):
         print(f"Parameter Group {i+1}:")
         for key, value in param_group.items():
             print(f"    {key}: {value}")
