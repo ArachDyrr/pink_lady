@@ -18,7 +18,7 @@ betas = (0.9, 0.999)
 momentum = 0.1
 dropout = 0.1 # does not influence resnets dropout
 amsgrad = False
-optchoice = 'adam'  # 'sgd' or 'adam'
+optchoice = 'sgd'  # 'sgd' or 'adam'
 
 # set the device
 device = set_device()
