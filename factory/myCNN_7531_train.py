@@ -1,6 +1,7 @@
 from datetime import datetime
 from modules.myFunctions import test_model
 from modules.myTrainFunctions import train, set_device
+from modules.myCNN import MyCNN_7531
 from torch import nn
 from torch.utils.data import DataLoader, random_split
 from torchvision import transforms as T
@@ -13,13 +14,13 @@ import wandb
 
 # hyperparameters
 learning_rate = 0.0001
-epochs = 2
+epochs = 50
 betas = (0.9, 0.999)
 momentum = 0.1
 dropout = 0.1  # does not influence resnets dropout
 amsgrad = False
 optchoice = "adam"  # 'sgd' or 'adam'
-early_stopping = False
+early_stopping = (5, 2)
 
 
 # set the device
@@ -27,15 +28,12 @@ device = set_device()
 
 
 # import the resnet18 model from pytorch and set output to 4 classes
-model = torch.hub.load("pytorch/vision", "resnet18", weights="IMAGENET1K_V1")
-num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 4)
+model = MyCNN_7531(dropout)
 model.to(device)
 model.train()
-
-
+print(model)
 # load the dataset, tranform and normalise it
-dataset_path = "/Users/stephandekker/workspace/pink_lady/storage/images/apples_segmentated"
+dataset_path = "./storage/images/apple_disease_classification_unedited/Train"
 transform = T.Compose(
     [
         T.ToTensor(),
@@ -70,7 +68,7 @@ train_dataset, val_dataset = random_split(
 
 
 # Create the DataLoader to load the dataset in batches
-batch_size = 32
+batch_size = 1
 train_loader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True
 )  # num_workers uitzoeken of het zin heeft met MPS
@@ -107,17 +105,21 @@ hyperparameters = {
     "momentum": momentum,
     "betas": betas,
     "dropout": dropout,
+    "amsgrad": amsgrad,
+    "batch_size": batch_size,
+    "early_stopping" : early_stopping,
 }
 model_parameters = {
     "model": "resnet18",
     "optimizer": optchoice,
     "criterion": "CrossEntropyLoss",
-}  # 'model' : model, 'optimizer' : optimizer, 'criterion' : criterion
+    "model_name": "MyCNN_97531half",
+}  # 'optimizer' : optimizer, 'criterion' : criterion
 parameters = {**hyperparameters, **model_parameters}  # merge the two dictionairies
 
 
 # start a new wandb run to track this script
-wandb.init(project="resnet18_224x224_py_test", config=parameters)
+wandb.init(project="myCNN_7531", config=parameters)
 
 
 # train the model

@@ -28,7 +28,8 @@ def train(
     optimizer,
     n_epochs,
     device,
-    model_file_name="model.pt",
+    early_stopping=False,
+    save_file_name="model.pt",
     local_save_path="/storage/data/generated",
 ):
     # initialize container variable for model performance results per epoch
@@ -52,9 +53,9 @@ def train(
         "val_acc_epoch": val_acc_epoch,
     }
 
-    model_file_name_loss = f"{str(model_file_name[:-3])}_loss.pt"
-    model_file_name_acc = f"{str(model_file_name[:-3])}_acc.pt"
-    final_model_file_name = f"{str(model_file_name[:-3])}_final.pt"
+    model_file_name_loss = f"{str(save_file_name)}_loss.pt"
+    model_file_name_acc = f"{str(save_file_name)}_acc.pt"
+    final_model_file_name = f"{str(save_file_name)}_final.pt"
     locally_saved_path = local_save_path
 
     file_data = {
@@ -153,7 +154,7 @@ def train(
         # save model if validation loss has decreased
         if val_loss <= val_loss_min:
             print(
-                f"Validation loss decreased ({val_loss_min:.5f} --> {val_loss:.5f})  Saving model to {model_file_name}..."
+                f"Validation loss decreased ({val_loss_min:.5f} --> {val_loss:.5f})  Saving model to {model_file_name_loss}..."
             )
 
             torch.save(model, model_safe_loss)
@@ -165,7 +166,7 @@ def train(
         # save model if validation accuracy has decreased
         if val_acc >= val_acc_max:
             print(
-                f"Validation accuracy increased ({val_acc_max:.5f} --> {val_acc:.5f})  Saving model to {model_file_name}..."
+                f"Validation accuracy increased ({val_acc_max:.5f} --> {val_acc:.5f})  Saving model to {model_file_name_acc}..."
             )
 
             torch.save(model, model_safe_acc)
@@ -174,11 +175,12 @@ def train(
             best_results["val_acc_epoch"] = epoch + 1
 
         early_stopping_counter += 1
-        if early_stopping_counter >= 3 and val_loss <= 0.1:
-            print(
-                f"Early stopping at epoch {epoch+1} as loss has not increased for 5 epochs and is lower than 1"
-            )
-            break
+        if early_stopping is not False:
+            if early_stopping_counter >= early_stopping[0] and val_loss <= early_stopping[1]:
+                print(
+                    f"Early stopping at epoch {epoch+1} as loss has not increased for {early_stopping[0]} epochs and is lower than {early_stopping[1]}"
+                )
+                break
 
         # log metrics to wandb
         wandb.log(

@@ -1,5 +1,5 @@
 from datetime import datetime
-from modules.myFunctions import test_model
+from modules.myFunctions import test_model_more
 from modules.myTrainFunctions import train, set_device
 from torch import nn
 from torch.utils.data import DataLoader, random_split
@@ -13,7 +13,7 @@ import wandb
 
 # hyperparameters
 learning_rate = 0.0001
-epochs = 2
+epochs = 20
 betas = (0.9, 0.999)
 momentum = 0.1
 dropout = 0.1  # does not influence resnets dropout
@@ -29,20 +29,21 @@ device = set_device()
 # import the resnet18 model from pytorch and set output to 4 classes
 model = torch.hub.load("pytorch/vision", "resnet18", weights="IMAGENET1K_V1")
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 4)
+model.fc = nn.Linear(num_ftrs, 2)
 model.to(device)
 model.train()
 
 
 # load the dataset, tranform and normalise it
-dataset_path = "/Users/stephandekker/workspace/pink_lady/storage/images/apples_segmentated"
+dataset_path = "./storage/images/more_apples/train"
 transform = T.Compose(
     [
         T.ToTensor(),
-        T.transforms.Resize((256, 256), antialias=True),
-        T.transforms.RandomCrop((224, 224)),
-        T.transforms.RandomHorizontalFlip(),
-        T.transforms.RandomVerticalFlip(),
+        # T.transforms.Resize((256, 256), antialias=True),
+        T.transforms.Resize((224, 224), antialias=True),
+        # T.transforms.RandomCrop((224, 224)),
+        # T.transforms.RandomHorizontalFlip(),
+        # T.transforms.RandomVerticalFlip(),
         # T.transforms.RandomRotation(25),  # Randomly rotate the image by a maximum of 30 degrees
         # T.transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Slightly change the image color
         # T.transforms.RandomGrayscale(p=0.1),  # Randomly convert the image to grayscale with a probability of 10%
@@ -98,7 +99,7 @@ epoch_loss = []
 
 timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 userAccountID = cf.settings["userAccountID"]
-saveFileName = f"{timestamp}_{userAccountID}"
+saveFileName = f"{timestamp}_resnet18_more_{userAccountID}"
 # create dictionairies for the hyperparameters and model parameters
 hyperparameters = {
     "saveFileName": saveFileName,
@@ -107,6 +108,7 @@ hyperparameters = {
     "momentum": momentum,
     "betas": betas,
     "dropout": dropout,
+    "dataset": 'more_apples',
 }
 model_parameters = {
     "model": "resnet18",
@@ -117,7 +119,7 @@ parameters = {**hyperparameters, **model_parameters}  # merge the two dictionair
 
 
 # start a new wandb run to track this script
-wandb.init(project="resnet18_224x224_py_test", config=parameters)
+wandb.init(project="resnet18_224x224_more_applest", config=parameters)
 
 
 # train the model
@@ -139,5 +141,5 @@ print('#-----------------------')
 #test the model
 
 testing_model = torch.load(loadpath)
-test_data_path = './storage/images/apple_disease_classification_unedited/Test'
-test_model(testing_model, test_data_path, device)
+test_data_path = './storage/images/more_apples/test'
+test_model_more(testing_model, test_data_path, device, batch_size)
