@@ -18,6 +18,8 @@ sklearn = "*"
 sentence-transformers = "*"
 wand = "*"
 reportlab = "*"
+torchcam = "*"
+grad-cam = "*"
 
 [dev-packages]
 ipykernel = "*"
