@@ -20,6 +20,8 @@ wand = "*"
 reportlab = "*"
 torchcam = "*"
 grad-cam = "*"
+rembg = "*"
+ipython = "*"
 
 [dev-packages]
 ipykernel = "*"
