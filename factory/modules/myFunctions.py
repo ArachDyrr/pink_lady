@@ -1,4 +1,3 @@
-# from MyAQLclass import MyAQLclass
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -7,6 +6,11 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 import os
 import shutil
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+# BEPAAL DE SCOPE VAN DEZE MODULE
 
 # quick and dirty fix for import pathing.
 if __name__ == "__main__":
@@ -40,13 +44,6 @@ def AQL_test_model(model, datasetPath, device):
             T.ToTensor(),
             T.transforms.Resize((256, 256), antialias=True),
             T.transforms.RandomCrop((224, 224)),
-            # T.transforms.RandomHorizontalFlip(),
-            # T.transforms.RandomVerticalFlip(),
-            # T.transforms.RandomRotation(25),  # Randomly rotate the image by a maximum of 30 degrees
-            # T.transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Slightly change the image color
-            # T.transforms.RandomGrayscale(p=0.1),  # Randomly convert the image to grayscale with a probability of 10%
-            # T.transforms.RandomErasing(p=0.1, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),  # Randomly erase rectangular patches of the image with a probability of 10%
-            # # T.transforms.RandomPerspective(distortion_scale=0.2, p=0.1, interpolation=3),  # Randomly apply a perspective transformation to the image with a probability of 10%
             T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
@@ -74,7 +71,6 @@ def AQL_test_model(model, datasetPath, device):
     num_classes = len(labels_dict)
     confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
 
-    # Iterate over the test dataset
     # Iterate over the test dataset
     for batch_idx, (images, labels) in enumerate(test_dataloader):
         images = images.to(device)
@@ -111,13 +107,19 @@ def AQL_test_model(model, datasetPath, device):
             break
 
     # Calculate overall accuracy
-    overall_accuracy = overall_correct / overall_total
+    # Prevent division by zero
+    if (overall_total != 0):
+        overall_accuracy = overall_correct / overall_total
 
     # Calculate accuracy for normal apples and abnormal apples separately
     normal_accuracy = normal_correct / normal_total if normal_total != 0 else 0.0
     abnormal_accuracy = (
         abnormal_correct / abnormal_total if abnormal_total != 0 else 0.0
     )
+
+
+
+    ## IS DIT NOG NODIG?
 
     # Print overall accuracy
     print(f"Overall accuracy: {overall_accuracy:.4f}")
@@ -301,6 +303,7 @@ def number_to_roman(number):
     return roman_numeral
 
 
+# KAN DIT WEG?
 # Move all .heic files from a source folder to a destination folder
 def move_files(source_folder, destination_folder, file_extension=".heic"):
     # Create the destination folder if it doesn't exist
@@ -344,6 +347,7 @@ def move_apple_files(source_folder, destination_folder):
 
 
 
+# NIET GEBRUIKEN IN RUNTIME OMGEVING
 # functions to display images
 def reverse_normalize(image):
     mean = [0.485, 0.456, 0.406]
@@ -382,6 +386,7 @@ def show_batch(test_d):
 # tof = '/Users/stephandekker/workspace/pink_lady/storage/images/apple_extended_unedited/Test/Normal_Apple'
 # move_files(fromf, tof, '.jpg')
 
+# IS DIT NOG NODIG?
 
 # acces the optimiser
 def optimiser_state(optimizer):
@@ -395,6 +400,7 @@ def optimiser_state(optimizer):
             print(f"    {key}: {value}")
         print()
 
+# VERPLAATSEN NAAR APARTE TEST MODULE?
 def test_model_360(model, datasetPath, device, batchSize=None):
     model.eval()
 
@@ -591,7 +597,7 @@ def test_model(model, datasetPath, device, batch_size=None):
     }
     return test_dict
 
-
+# NAAR TEST MODULE
 def test_model_more(model, datasetPath, device, batchSize=None):
     model.eval()
 
