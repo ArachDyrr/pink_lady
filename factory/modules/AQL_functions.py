@@ -1,5 +1,6 @@
 # a file for the ALQ selector.
 
+
 def lot_seize(lot):
     if lot <= 0:
         # raise ValueError("Lot must be a positive integer")
@@ -10,43 +11,48 @@ def lot_seize(lot):
         # raise ValueError("Bigger than 500 has not been implemented yet")
         None
 
-def table_A(lotSize=500, inspectionLvl = 'I'):
-    if lotSize >= 281 and lotSize <= 500 and inspectionLvl == 'I':
-        code_letter = 'F'
+
+def table_A(lotSize=500, inspectionLvl="I"):
+    if lotSize >= 281 and lotSize <= 500 and inspectionLvl == "I":
+        code_letter = "F"
         return code_letter
     else:
         return None
-    
-def table_B(codeLeter='F', inspection_lvl = 'I'):
-    if codeLeter == 'F' and inspection_lvl == 'I':
+
+
+def table_B(codeLeter="F", inspection_lvl="I"):
+    if codeLeter == "F" and inspection_lvl == "I":
         return 32
     else:
         return None
 
+
 def rejectionValue(codeLeter, acceptablePercent):
     sample_sicze = 0
     reject_nr = 0
-    
-    if codeLeter == 'F' and acceptablePercent <= 0.4:
+
+    if codeLeter == "F" and acceptablePercent <= 0.4:
         sample_size = 32
         reject_nr = 1
-    elif codeLeter == 'F' and acceptablePercent <= 6.5:
+    elif codeLeter == "F" and acceptablePercent <= 6.5:
         sample_size = 20
         reject_nr = 2
-    elif codeLeter == 'F' and acceptablePercent <= 15:
+    elif codeLeter == "F" and acceptablePercent <= 15:
         sample_size = 20
         reject_nr = 6
     else:
         sample_size = None
         reject_nr = None
-    
-    values = sample_size,reject_nr
+
+    values = sample_size, reject_nr
     return values
+
 
 def AQL_selector(lotSize, inspectionLvl, acceptablePercent):
     code_letter = table_A(lotSize, inspectionLvl)
     rejection_value = rejectionValue(code_letter, acceptablePercent)
-    return rejection_value    
+    return rejection_value
+
 
 def AQL_classificationmaker(lotSize, inspectionLvl, acceptablePercentages):
     classDict = dict()
@@ -61,22 +67,22 @@ def AQL_classificationmaker(lotSize, inspectionLvl, acceptablePercentages):
     classifier = sample_size, rejectDict
     return classifier
 
+
 def AQL_classification(batchList, classification):
     sampleSizeCheck = len(batchList) - classification[0]
     if sampleSizeCheck != 0:
         raise ValueError("The batchList and the sampleSize do not match")
     reject = sum(batchList)
-    print(reject)   
-    for i in classification[1]:
-            if reject >= classification[0][i].values():
-                return f'This lot is class_{classification[0][i].keys()}'
-    
-    return f'This lot is rejected'
+    print(reject)
+    for key, value in classification[1].items():
+        if value <= reject:
+            return f"This lot is class_{key}"
 
-    
+    return "This lot is rejected"
+
 
 def testfunction():
-    print('testing!')
+    print("testing!")
 
     # lot_seizeList = [501, 500, 499, 281, 280, 279, 0, -1, -500, 1000]
     # lot_seizeCounter = 0
@@ -106,30 +112,62 @@ def testfunction():
     #     AQL_selectorCounter += 1
     #     AQL_selector_result = AQL_classificationmaker(i[0], i[1], i[2])
     #     print(f'AQL_selectorTupleList{AQL_selectorCounter} ; {AQL_selector_result}')
-    
-    AQL_classifierTupleList = [(500, 'I', [0.4, 6.5, 15])]
+
+    AQL_classifierTupleList = [(500, "I", [0.4, 6.5, 15])]
     # make a list of 32 1's and 0's to test the AQL_classifier
     testlist = []
-    classification = AQL_classificationmaker( AQL_classifierTupleList[0][0], AQL_classifierTupleList[0][1], AQL_classifierTupleList[0][2])
+    classification = AQL_classificationmaker(
+        AQL_classifierTupleList[0][0],
+        AQL_classifierTupleList[0][1],
+        AQL_classifierTupleList[0][2],
+    )
     # print(classification)
-    
+
     # .make a list of the classes in a dictionary
 
     # print(classification[1].keys())
     # print(classification[1].values())
-    
-    sampleTestValueList = [1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    Klasse = AQL_classification(sampleTestValueList, classification)
-    print (Klasse)
 
-  
+    sampleTestValueList = [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ]
+    Klasse = AQL_classification(sampleTestValueList, classification)
+    print(Klasse)
+
 
 ##### fix last part! #####
-    
- 
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     testfunction()
-
-
