@@ -183,3 +183,6 @@ storage/images
 factory/modules/mailConfig.py
 
 storage/data/pdf
+
+datasets
+
