@@ -24,15 +24,6 @@ early_stopping = False
 
 # set the device
 device = set_device()
-device = 'cpu'
-
-
-# import the resnet18 model from pytorch and set output to 4 classes
-model = torch.hub.load("pytorch/vision", "resnet18", weights="IMAGENET1K_V1")
-num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 2)
-model.to(device)
-model.train()
 
 
 # load the dataset, tranform and normalise it
@@ -78,6 +69,13 @@ train_loader = DataLoader(
 )  # num_workers uitzoeken of het zin heeft met MPS
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 
+# import the resnet18 model from pytorch and set output to 4 classes
+model = torch.hub.load("pytorch/vision", "resnet18", weights="IMAGENET1K_V1")
+in_ftrs = model.fc.in_features
+out_ftrs = len(dataset.class_to_idx)
+model.fc = nn.Linear(in_ftrs, 2)
+model.to(device)
+model.train()
 
 # optimizer selector from hyperparameters
 if optchoice == "adam":
@@ -93,6 +91,7 @@ elif optchoice == "sgd":
 # loss function
 labels = dataset.targets
 from collections import Counter
+
 label_counts = Counter(labels)
 class_weights = {}
 for label, count in label_counts.items():
@@ -100,8 +99,10 @@ for label, count in label_counts.items():
 
 # Convert the class weights to a tensor
 criterion_weights_tensor = torch.tensor(list(class_weights.values()))
-criterion = nn.CrossEntropyLoss(weight=criterion_weights_tensor)  # Define the loss function
-
+criterion_weights_tensor = criterion_weights_tensor.to(device)
+criterion = nn.CrossEntropyLoss(
+    weight=criterion_weights_tensor
+)  # Define the loss function
 
 
 # set epochloss to empty list
@@ -119,7 +120,7 @@ hyperparameters = {
     "momentum": momentum,
     "betas": betas,
     "dropout": dropout,
-    "dataset": 'more_apples',
+    "dataset": "more_apples",
 }
 model_parameters = {
     "device": device,
@@ -137,7 +138,15 @@ wandb.init(project="resnet18_224x224_more_applest", config=parameters)
 
 # train the model
 training = train(
-    model, train_loader, val_loader, criterion, optimizer, epochs, device, early_stopping, saveFileName
+    model,
+    train_loader,
+    val_loader,
+    criterion,
+    optimizer,
+    epochs,
+    device,
+    early_stopping,
+    saveFileName,
 )
 
 
@@ -147,10 +156,10 @@ wandb.finish()
 # test the model.
 _, _, file_data = training
 loadpath = f'.{file_data["local_save_path"]}/{file_data["min_loss_file"]}'
-print('#-----------------------') 
+print("#-----------------------")
 
-#test the model
+# test the model
 
 testing_model = torch.load(loadpath)
-test_data_path = './storage/images/more_apples/original_test'
+test_data_path = "./storage/images/more_apples/original_test"
 test_model_more(testing_model, test_data_path, device, batch_size)
