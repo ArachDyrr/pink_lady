@@ -1,6 +1,6 @@
 # imports
 import torch
-from modules.myFunctions import set_device, test_model, test_model_more
+from streamlit_myFunctions import set_device, test_model, test_model_more
 
 # Load the test dataset
 dataset_path = "./storage/images/apple_extended_unedited/Test"

@@ -159,6 +159,14 @@ def test(test_input=0):
     print(f"AQL_test_parameters: {testcase.AQL_test_parameters()}")
     print(f"output: {testcase.output()}")
 
-
+test()
 if __name__ == "__main__":
     test()
+
+
+bad_apples = 30
+testimngcase = MyAQLclass()
+testimngcase.test_input = bad_apples
+x = testimngcase.output()
+print("#-----------------------------#")
+print(f"{x} is the result")

@@ -25,7 +25,7 @@ def set_device():
         else "cpu"
     )
 
-    print(f"Device is '{device}'")
+    # print(f"Device is '{device}'")
     return device
 
 

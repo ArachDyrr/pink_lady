@@ -4,7 +4,17 @@ import streamlit as st
 
 from PIL import Image
 from modules.myFunctions import set_device, test_model, test_model_more
+from modules.streamlit_functions import create_dataset, streamlit_batch_check, set_device
 import torch
+from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as T
+from torch.utils.data import DataLoader, Dataset
+from torchvision.transforms import ToTensor
+from modules.streamlit_functions import StreamlitDataset
+import io as io
+from modules.MyAQLclass import MyAQLclass
+from modules.pdf_modules.pdf_generator import generate_pdf
+
 #--------------------------------------------------
 imported_model_state_path = "./streamlit_20230622-111305_resnet18_more_pinky_loss.pt"
 device = set_device()
@@ -41,6 +51,7 @@ def page1():
 
         st.title("AQL Image Batch Processor")
 
+        # st.button("Select AQL criteria", on_click=nextPage)
         st.button("Select AQL criteria", on_click=nextPage)
 
 #--------------------------------------------------
@@ -68,8 +79,18 @@ def page3():
     with page.container():
 
         st.title("Selected AQL General I, Lot size 250-500 Batchsize 32")
-
-        st.button("Accept AQL protocol", on_click=nextPage)
+        st.divider()
+        st.lotname = st.text_input("Lot name", value="EX20230630AQ2981")
+        st.inspectorsname = st.text_input("Inspector's name", value="Fatima")
+        st.divider()
+        st.origin = st.text_input("Country of origin", value="Netherlands")
+        st.destination = st.text_input("Country of destination", value="United Kingdom")
+        st.contractor = st.text_input("Contractor", value="Pink Lady")
+        st.divider()
+        st.text(f'{st.inspectorsname} proceed with {st.lotname}')
+        st.text(f'Origin: {st.origin} | Destination: {st.destination} | Contractor: {st.contractor}')
+        st.divider()
+        st.button(f"Accept AQL protocol", on_click=nextPage)
         
         st.button("Reject AQL protocol", on_click=restart)
 
@@ -79,7 +100,7 @@ def page4():
 
     with page.container():
             
-            st.title("Select imput type")
+            st.title("Select input type")
     
             st.button("upload 32 imagages.", on_click=nextPage)
 
@@ -96,6 +117,7 @@ def page5():
         st.session_state.batch = st.file_uploader("", type=None, accept_multiple_files=True)
         print("batch size: ", len(st.session_state.batch))
 
+    
     if st.session_state.batch is not None:
 
         print("batch size: ", len(st.session_state.batch))
@@ -107,24 +129,100 @@ def page6():
 
     with page.container():
 
-        st.title(type(st.session_state.batch))
+        st.title("AQL AI test results")
+        st.divider()
 
 
-    print("batch size: ", len(st.session_state.batch))
-    print("batch size: ", type(st.session_state.batch))
-    # model = torch.load(imported_model_state_path)
-    # model=model.to(device)
-    # result_more= test_model_more(model, st.session_state.batch, device, 32)
-    # print(result_more)
+    dataset_x = st.session_state.batch
+   
+    pil_images = []
+   
+    transform = T.Compose([
+        T.ToTensor(),
+        T.Resize((224,224)),
+        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        # T.ToTensor()
+         ])
+
+    for item in dataset_x:
+        pil_image = Image.open(item)
+        pil_images.append(pil_image)
 
 
+
+
+    # # # Load the model
+    model = torch.load(imported_model_state_path)
+    model=model.to(device)
+    model.eval()
+
+    goodapplescore = 0
+    badapplescore = 0
+    for item in pil_images:
+        with torch.no_grad():
+            with st.spinner("working magic"):
+                tensor_image = transform(item)
+                tensor_image = tensor_image.unsqueeze(0)
+                tensor_image = tensor_image.to(device)
+                result = model(tensor_image)
+                probabilities = torch.nn.functional.softmax(result[0], dim=0)
+                if probabilities[0] > probabilities[1]:
+                    goodapplescore += 1
+                if probabilities[0] < probabilities[1]:
+                    badapplescore += 1
+    
+    st.batchsize = len(pil_images)
+    if goodapplescore + badapplescore != st.batchsize:
+        st.text("Automated AQL test is unreliable. n\
+                Please have the batch manually inspected.")
+
+
+    st.goodapplescore = goodapplescore
+    st.badapplescore = badapplescore
+
+
+    # initiate the AQL class
+    testingcase = MyAQLclass()
+    testingcase.test_input = badapplescore
+    st.testclass = testingcase.output()
+
+    if st.session_state.batch is not None:
+        st.text(f"batch size: {len(pil_images)}")
+        st.text(f"accepted apples: {goodapplescore}")
+        st.text(f"rejected apples: {badapplescore}")
+        st.divider()
+        st.subheader(f"The AQL quality class label for this lot is: class_{st.testclass}")
+        st.divider()
+        st.text("The AQL test is based on the following parameters:")
+        st.text(f"Lot size: {testingcase.get_lotsize()} | Product class: {testingcase.get_product_class()} | Test inspection level: {testingcase.get_test_inspection_lvl()}")
+        st.button(f"Accept", on_click=nextPage)
+        st.button(f"Reject", on_click=restart)
 
 #--------------------------------------------------
 def page7():
 
     with page.container():
 
-        st.title('save results and print documents')
+        st.title('The documents')
+        st.text('The documents are they should appear in the designated locale shortly.')
+
+        report_info = {
+            "Taric": "0808 10 00 00",
+            "Country of origin": st.origin,
+            "Country of destination": st.destination,
+            "Contractor": st.contractor,
+            "Lot name": st.lotname,
+            "Inspector": st.inspectorsname,
+            "Lot size": "500",
+            "Test batch size" : st.batchsize,
+            "Test inspection level": "G-I",
+            "Accepted apples": st.goodapplescore,
+            "Rejected apples": st.badapplescore,
+            "Product class": st.testclass,
+        }
+
+        generate_pdf(st.lotname, report_info)
+
 
         st.button("Return to start", on_click=restart)
 
