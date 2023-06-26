@@ -3,7 +3,11 @@
 import streamlit as st
 
 from PIL import Image
-
+from modules.myFunctions import set_device, test_model, test_model_more
+import torch
+#--------------------------------------------------
+imported_model_state_path = "./streamlit_20230622-111305_resnet18_more_pinky_loss.pt"
+device = set_device()
 #--------------------------------------------------
 
 def nextPage():
@@ -90,10 +94,11 @@ def page5():
 
         # Store images
         st.session_state.batch = st.file_uploader("", type=None, accept_multiple_files=True)
+        print("batch size: ", len(st.session_state.batch))
 
-        if st.session_state.batch is not None:
+    if st.session_state.batch is not None:
 
-            st.image(st.session_state.batch)
+        print("batch size: ", len(st.session_state.batch))
 
         st.button("Process images", on_click=nextPage)
 
@@ -102,31 +107,15 @@ def page6():
 
     with page.container():
 
-        st.title("AI is working!")
-
-        # loop through images, display them and accept or reject them
-        rejectcounter = 0
-        acceptcounter = 0
-        button1 = st.button("Accept1")
-        button2 = st.button("Reject1")
-        for image in st.session_state.batch:
-                
-                with page.container():
-    
-                    st.image(image)
+        st.title(type(st.session_state.batch))
 
 
-                    # store accept or reject in a variable
-                    if button1:
-                        acceptcounter += 1
-                        print(acceptcounter)
-                    elif button2:
-                        rejectcounter += 1
-                        print(rejectcounter)    
-                    
-        # move to the next page
-        # st.button("Accept results => accepted: {acceptcounter} Rejected: {rejectcounter}'", on_click=nextPage)
-        # st.button("Reject results", on_click=WIP)
+    print("batch size: ", len(st.session_state.batch))
+    print("batch size: ", type(st.session_state.batch))
+    # model = torch.load(imported_model_state_path)
+    # model=model.to(device)
+    # result_more= test_model_more(model, st.session_state.batch, device, 32)
+    # print(result_more)
 
 
 
