@@ -3,12 +3,10 @@
 import streamlit as st
 
 from PIL import Image
-from modules.streamlit_functions import set_device
+from modules.streamlit_functions import set_device, MyAQLclass, generate_pdf, generate_lotname, show_pdf, download_pdf
 import torch
 import torchvision.transforms as T
 import io as io
-from modules.MyAQLclass import MyAQLclass
-from modules.pdf_modules.pdf_generator import generate_pdf
 
 #--------------------------------------------------
 imported_model_state_path = "./streamlit_20230622-111305_resnet18_more_pinky_loss.pt"
@@ -75,9 +73,11 @@ def page3():
 
         st.title("Selected AQL General I, Lot size 250-500 Batchsize 32")
         st.divider()
-        st.lotname = st.text_input("Lot name", value="EX20230630AQ2981")
+        st.lotname = st.text_input("Lot name", value=generate_lotname())
         st.inspectorsname = st.text_input("Inspector's name", value="Fatima")
         st.divider()
+        st.taric = st.text_input("Taric", value="080810 00 00")
+        st.tradename = st.text_input("Trade name", value="Apples")
         st.origin = st.text_input("Country code of origin", value="NED")
         st.destination = st.text_input("Country code of destination", value="GBR")
         st.incoterms = st.text_input("Incoterms", value="FCA")
@@ -85,7 +85,8 @@ def page3():
         st.countryoftesting = st.text_input("Country of testing", value="NED")
         st.contractor = st.text_input("Contractor", value="Pink Lady")
         st.divider()
-        st.text(f'{st.inspectorsname} proceed with {st.lotname}')
+        st.text(f'{st.inspectorsname} accept to proceed with {st.lotname}')
+        st.text(f'taric: {st.taric} | incoterms: {st.incoterms} | incoterms location: {st.incotermslocation}')
         st.text(f'Origin: {st.origin} | Destination: {st.destination} | Contractor: {st.contractor}')
         st.divider()
         st.button(f"Accept AQL protocol", on_click=nextPage)
@@ -100,7 +101,7 @@ def page4():
             
             st.title("Select input type")
     
-            st.button("upload 32 imagages.", on_click=nextPage)
+            st.button("upload 32 apple images.", on_click=nextPage)
 
             # st.button("Take 32 live the images.", on_click=WIP)
 
@@ -112,13 +113,11 @@ def page5():
         st.title("Upload an image batch")
 
         # Store images
-        st.session_state.batch = st.file_uploader("", type=None, accept_multiple_files=True)
-        print("batch size: ", len(st.session_state.batch))
+        st.session_state.batch = st.file_uploader("", type='jpg', accept_multiple_files=True)
 
     
     if st.session_state.batch is not None:
 
-        print("batch size: ", len(st.session_state.batch))
 
         st.button("Process images", on_click=nextPage)
 
@@ -201,12 +200,12 @@ def page7():
 
     with page.container():
 
-        st.title('The documents')
-        st.text('The documents are they should appear in the designated locale shortly.')
+        st.title('The document')
 
         report_info = {
             "Lot name": st.lotname,
-            "Taric": "0808 10 00 00",
+            "Taric": st.taric,
+            "Trade name": st.tradename,
             "Country of origin": st.origin,
             "Country of destination": st.destination,
             "Incoterms": st.incoterms,
@@ -219,13 +218,19 @@ def page7():
             "Test inspection level": "G-I",
             "Accepted apples": st.goodapplescore,
             "Rejected apples": st.badapplescore,
-            "Product class": st.testclass,
+            "AQL classification": f"class_{st.testclass}",
         }
 
-        generate_pdf(st.lotname, report_info)
+        generated_pdf = generate_pdf(st.lotname, report_info)
+  
 
+        show_pdf(generated_pdf)
+
+        download_pdf(generated_pdf, st.lotname)
 
         st.button("Return to start", on_click=restart)
+
+
 
 def page99():
     with page.container():

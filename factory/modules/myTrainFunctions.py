@@ -3,6 +3,8 @@ import numpy as np
 from tqdm import tqdm
 import wandb
 import matplotlib.pyplot as plt
+from os import makedirs
+from os.path import exists
 
 
 # function to set device to GPU/mps if available
@@ -18,6 +20,10 @@ def set_device():
     print(f"Device is '{device}'")
     return device
 
+def create_folder(folder_path):
+    if not exists(folder_path):
+        makedirs(folder_path)
+    return folder_path
 
 # function to train the model
 def train(
@@ -52,6 +58,8 @@ def train(
         "val_acc_max": val_acc_max,
         "val_acc_epoch": val_acc_epoch,
     }
+
+    # create_folder(local_save_path)
 
     model_file_name_loss = f"{str(save_file_name)}_loss.pt"
     model_file_name_acc = f"{str(save_file_name)}_acc.pt"
