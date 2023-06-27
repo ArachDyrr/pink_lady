@@ -15,6 +15,7 @@ pandas = "*"
 azure-cosmos = "*"
 streamlit = "*"
 sklearn = "*"
+scikit-learn = "*"
 
 [dev-packages]
 ipykernel = "*"
