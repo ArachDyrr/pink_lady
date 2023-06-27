@@ -196,7 +196,7 @@ def generate_pdf(file_name, data_dict, file_folder="../streamlit/data/"):
     pdf.drawImage(image_path, x, y, width=pdf._pagesize[0], height=pdf._pagesize[1] / 2)
 
     # Set the dimensions and position of the logo
-    logo_path = "./miw.png"
+    logo_path = "./MIW2.png"
     logo_width = 80
     logo_height = 50
     logo_x = pdf._pagesize[0] - logo_width - 20  # Adjust the values as needed
@@ -206,7 +206,7 @@ def generate_pdf(file_name, data_dict, file_folder="../streamlit/data/"):
     pdf.drawImage(logo_path, logo_x, logo_y, width=logo_width, height=logo_height)
 
     # Set the dimensions and position of the logo
-    banner_path = "./banner.png"
+    banner_path = "./HR2.png"
     banner_width = 200
     banner_height = 35
     banner_x = pdf._pagesize[0] - banner_width - 350  # Adjust the values as needed
