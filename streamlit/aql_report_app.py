@@ -230,7 +230,11 @@ def page7():
 
         st.button("Return to start", on_click=restart)
 
+#--------------------------------------------------
+def page8():
+    pass # WIP in case of more time a chat functionality as seen in factory/Apples_chat.ipynb would be implemented here.
 
+#--------------------------------------------------
 
 def page99():
     with page.container():
