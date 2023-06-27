@@ -184,7 +184,7 @@ factory/modules/mailConfig.py
 
 storage/data/pdf
 
-datasets
+datasets/
 
 hall_of_fame/swin_t/20230621-002105_resnet18_more_pinky_loss.pt
 streamlit/batch1
