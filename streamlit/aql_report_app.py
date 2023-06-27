@@ -31,18 +31,18 @@ pdfmetrics.registerFont(TTFont("MonospaceOblique", "MonospaceOblique.ttf"))
 
 
 # function to set device to GPU/mps if available
-def set_device():
-    device = (
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps"
-        if torch.backends.mps.is_available()
-        else "cpu"
-    )
+# def set_device():
+#     device = (
+#         "cuda"
+#         if torch.cuda.is_available()
+#         else "mps"
+#         if torch.backends.mps.is_available()
+#         else "cpu"
+#     )
 
-    # print(f"Device is '{device}'")
-    return device
-
+    # # print(f"Device is '{device}'")
+    # return device
+device = "cpu"
 
 class MyAQLclass:
     def __init__(
