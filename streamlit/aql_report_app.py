@@ -3,14 +3,9 @@
 import streamlit as st
 
 from PIL import Image
-from modules.myFunctions import set_device, test_model, test_model_more
-from modules.streamlit_functions import create_dataset, streamlit_batch_check, set_device
+from modules.streamlit_functions import set_device
 import torch
-from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as T
-from torch.utils.data import DataLoader, Dataset
-from torchvision.transforms import ToTensor
-from modules.streamlit_functions import StreamlitDataset
 import io as io
 from modules.MyAQLclass import MyAQLclass
 from modules.pdf_modules.pdf_generator import generate_pdf
@@ -64,7 +59,7 @@ def page2():
 
         # Select AQL criteria
         # 
-        st.button("Make AI Work: advanced", on_click=WIP)
+        # st.button("Make AI Work: advanced", on_click=WIP)
 
         # Select AQL criteria
         st.button("Make AI Work: standard", on_click=nextPage)
@@ -83,8 +78,11 @@ def page3():
         st.lotname = st.text_input("Lot name", value="EX20230630AQ2981")
         st.inspectorsname = st.text_input("Inspector's name", value="Fatima")
         st.divider()
-        st.origin = st.text_input("Country of origin", value="Netherlands")
-        st.destination = st.text_input("Country of destination", value="United Kingdom")
+        st.origin = st.text_input("Country code of origin", value="NED")
+        st.destination = st.text_input("Country code of destination", value="GBR")
+        st.incoterms = st.text_input("Incoterms", value="FCA")
+        st.incotermslocation = st.text_input("Incoterms location", value="Rotterdam")
+        st.countryoftesting = st.text_input("Country of testing", value="NED")
         st.contractor = st.text_input("Contractor", value="Pink Lady")
         st.divider()
         st.text(f'{st.inspectorsname} proceed with {st.lotname}')
@@ -104,7 +102,7 @@ def page4():
     
             st.button("upload 32 imagages.", on_click=nextPage)
 
-            st.button("Take 32 live the images.", on_click=WIP)
+            # st.button("Take 32 live the images.", on_click=WIP)
 
 #--------------------------------------------------
 def page5():
@@ -207,11 +205,14 @@ def page7():
         st.text('The documents are they should appear in the designated locale shortly.')
 
         report_info = {
+            "Lot name": st.lotname,
             "Taric": "0808 10 00 00",
             "Country of origin": st.origin,
             "Country of destination": st.destination,
+            "Incoterms": st.incoterms,
+            "Incoterms location": st.incotermslocation,
+            "Country of testing": st.countryoftesting,
             "Contractor": st.contractor,
-            "Lot name": st.lotname,
             "Inspector": st.inspectorsname,
             "Lot size": "500",
             "Test batch size" : st.batchsize,
