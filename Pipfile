@@ -15,6 +15,7 @@ pandas = "*"
 azure-cosmos = "*"
 streamlit = "*"
 scikit-learn = "*"
+reportlab = "*"
 
 [dev-packages]
 ipykernel = "*"
