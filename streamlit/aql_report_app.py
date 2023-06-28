@@ -9,7 +9,7 @@ import torchvision.transforms as T
 import io as io
 
 #--------------------------------------------------
-imported_model_state_path = "./streamlit_20230622-111305_resnet18_more_pinky_loss.pt"
+imported_model_state_path = "./streamlit/streamlit_20230622-111305_resnet18_more_pinky_loss.pt"
 device = set_device()
 #--------------------------------------------------
 
